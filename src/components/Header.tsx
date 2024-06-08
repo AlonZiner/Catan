@@ -1,16 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  };
+
   return (
-    <nav className="bg-brown-800 text-white p-4">
-      <Link className="text-white text-xl font-bold" to="/">Catan Game History</Link>
-      <div className="flex space-x-4">
-        <Link className="text-white hover:text-orange-500" to="/">Home</Link>
-        <Link className="text-white hover:text-orange-500" to="/add-game">Add Game</Link>
-      </div>
-    </nav>
+    <header className="bg-primary text-background p-4">
+      <h1 className="text-2xl font-bold">Settlers of Catan Game History</h1>
+      <button
+        onClick={toggleTheme}
+        className="mb-4 px-4 py-2 bg-primary text-background rounded"
+      >
+        Toggle Theme
+      </button>
+    </header>
   );
-}
+};
 
 export default Header;
