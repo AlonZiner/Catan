@@ -38,7 +38,16 @@ const GameList: React.FC<GameListProps> = ({ games }) => {
 
   return (
     <div className="game-list">
-      <div className="controls mb-4">
+      <div className="controls mb-4 flex justify-between">
+        <div className="filter-controls p-1">
+          <input
+            type="text"
+            placeholder="Filter by winner"
+            value={filterWinner}
+            onChange={handleFilter}
+            className="px-2 py-1 border border-secondary rounded"
+          />
+        </div>
         <div className="sort-controls mb-2">
           <button
             onClick={() => handleSort('date')}
@@ -52,15 +61,6 @@ const GameList: React.FC<GameListProps> = ({ games }) => {
           >
             Sort by Winner
           </button>
-        </div>
-        <div className="filter-controls">
-          <input
-            type="text"
-            placeholder="Filter by winner"
-            value={filterWinner}
-            onChange={handleFilter}
-            className="px-2 py-1 border border-secondary rounded"
-          />
         </div>
       </div>
       {filteredGames.map((game) => (
