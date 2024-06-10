@@ -4,10 +4,10 @@
 @tailwind utilities;
 
 :root {
-  --bg-color: #F2F2F2;
-  --text-color: #212121;
-  --primary-color: #E91E63;
-  --accent-color: #CE93D8;
+  --bg-color: #212121;
+  --text-color: #F2F2F2;
+  --primary-color: #F06292;
+  --accent-color: #8E24AA;
 }
 
 [data-theme="dark"] {

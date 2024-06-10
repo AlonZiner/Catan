@@ -64,7 +64,7 @@ const GameList: React.FC<GameListProps> = ({ games }) => {
         </div>
       </div>
       {filteredGames.map((game) => (
-        <GameItem key={game.date} game={game} />
+        <GameItem key={game.id} game={game} />
       ))}
     </div>
   );
