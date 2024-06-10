@@ -38,7 +38,7 @@ const GameList: React.FC<GameListProps> = ({ games }) => {
 
   return (
     <div className="game-list">
-      <div className="controls mb-4 flex justify-between">
+      <div className="controls mb-4">
         <div className="filter-controls p-1">
           <input
             type="text"
