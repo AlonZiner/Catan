@@ -6,7 +6,7 @@ interface GameListProps {
   games: Game[];
 }
 
-const GameList: React.FC<GameListProps> = ({ games }) => {
+const GameList = ({ games } : GameListProps) => {
   const [sortField, setSortField] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<string>('asc');
   const [filterWinner, setFilterWinner] = useState<string>('');
@@ -21,12 +21,32 @@ const GameList: React.FC<GameListProps> = ({ games }) => {
     setFilterWinner(event.target.value);
   };
 
+  const parseDateString = (dateString: string): Date => {
+    const parts = dateString.split('/');
+    return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+  };
+
   const sortedGames = [...games].sort((a, b) => {
     if (sortField) {
-      if (sortOrder === 'asc') {
-        return a[sortField as keyof Game] > b[sortField as keyof Game] ? 1 : -1;
+      const aValue = a[sortField as keyof Game];
+      const bValue = b[sortField as keyof Game];
+      
+      if (sortField === 'date') {
+        // For date field, parse the date strings to Date objects for comparison
+        const aDate = parseDateString(aValue as string);
+        const bDate = parseDateString(bValue as string);
+        if (sortOrder === 'asc') {
+          return aDate > bDate ? 1 : -1;
+        } else {
+          return aDate < bDate ? 1 : -1;
+        }
       } else {
-        return a[sortField as keyof Game] < b[sortField as keyof Game] ? 1 : -1;
+        // For other fields, perform a regular string comparison
+        if (sortOrder === 'asc') {
+          return aValue > bValue ? 1 : -1;
+        } else {
+          return aValue < bValue ? 1 : -1;
+        }
       }
     }
     return 0;
@@ -39,7 +59,7 @@ const GameList: React.FC<GameListProps> = ({ games }) => {
   return (
     <div className="game-list">
       <div className="controls mb-4">
-        <div className="filter-controls p-1">
+        <div className="filter-controls mb-4">
           <input
             type="text"
             placeholder="Filter by winner"
