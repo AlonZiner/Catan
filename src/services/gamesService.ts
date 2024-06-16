@@ -2,7 +2,7 @@ import { Game } from '../types';
 import games from './games.json';
 
 class GamesService {
-    getGames(): Game[] | null {
+    getGames(): Game[] {
         return games;
     }
 }

@@ -1,17 +1,22 @@
 // src/components/HomePage.tsx
 
-import GameList from "./GameList";
 import { Game } from "../types";
 import gamesService from "../services/gamesService";
 import { useEffect, useState } from "react";
 import { Bar, Pie, Line } from "react-chartjs-2";
 import "chart.js/auto"; // Important for Chart.js v3 compatibility
+import FilterForm from "./FilterForm";
+import CollapsibleDiv from "./CollapsibleDiv";
 
 const HomePage = () => {
-  const [games, setGames] = useState<Game[] | null>(null);
+  const [games, setGames] = useState<Game[]>([]);
+  const [filteredGames, setFilteredGames] = useState<Game[]>([]);
+
 
   useEffect(() => {
-    setGames(gamesService.getGames());
+    const data = gamesService.getGames();
+    setGames(data);
+    setFilteredGames(data);
   }, []);
 
   if (!games) {
@@ -29,7 +34,7 @@ const HomePage = () => {
     });
 
     const mostWinsPlayer = Object.keys(winsCount).reduce((a, b) =>
-      winsCount[a] > winsCount[b] ? a : b
+      winsCount[a] > winsCount[b] ? a : b, ""
     );
 
     return { name: mostWinsPlayer, wins: winsCount[mostWinsPlayer] };
@@ -48,7 +53,7 @@ const HomePage = () => {
     });
 
     const mostPointsPlayer = Object.keys(pointsCount).reduce((a, b) =>
-      pointsCount[a] > pointsCount[b] ? a : b
+      pointsCount[a] > pointsCount[b] ? a : b, ""
     );
 
     return { name: mostPointsPlayer, points: pointsCount[mostPointsPlayer] };
@@ -65,14 +70,15 @@ const HomePage = () => {
     });
 
     return Object.keys(expansionCount).reduce((a, b) =>
-      expansionCount[a] > expansionCount[b] ? a : b
+      expansionCount[a] > expansionCount[b] ? a : b, ""
     );
   };
 
-  const getMostRecentGameDate = (games: Game[]) => {
-    return games.reduce((latest, game) =>
-      new Date(game.date) > new Date(latest.date) ? game : latest
-    ).date;
+  const getMostRecentGameDate = () => {
+    // return games.reduce((latest:, game) =>
+    //   new Date(game.date) > new Date(latest.date) ? game.date : latest, ""
+    // );
+    return new Date().toUTCString()
   };
 
   const getHighestScore = (games: Game[]) => {
@@ -100,7 +106,7 @@ const HomePage = () => {
     });
 
     const mostFrequentPlayer = Object.keys(playerCount).reduce((a, b) =>
-      playerCount[a] > playerCount[b] ? a : b
+      playerCount[a] > playerCount[b] ? a : b, ""
     );
 
     return { name: mostFrequentPlayer, games: playerCount[mostFrequentPlayer] };
@@ -318,24 +324,27 @@ const HomePage = () => {
     };
   };
 
-  const mostWinsPlayer = getMostWinsPlayer(games);
-  const mostPointsPlayer = getMostPointsPlayer(games);
-  const totalGames = games.length;
-  const mostFrequentExpansion = getMostFrequentExpansion(games);
-  const mostRecentGameDate = getMostRecentGameDate(games);
-  const highestScore = getHighestScore(games);
-  const frequentPlayer = getMostFrequentPlayer(games);
-  const averageScore = getAverageScore(games);
+  const mostWinsPlayer = getMostWinsPlayer(filteredGames);
+  const mostPointsPlayer = getMostPointsPlayer(filteredGames);
+  const totalGames = filteredGames.length;
+  const mostFrequentExpansion = getMostFrequentExpansion(filteredGames);
+  const mostRecentGameDate = getMostRecentGameDate();
+  const highestScore = getHighestScore(filteredGames);
+  const frequentPlayer = getMostFrequentPlayer(filteredGames);
+  const averageScore = getAverageScore(filteredGames);
 
-  const averageScoresByPlayer = generateAverageScoresByPlayer(games);
-  const playerParticipation = generatePlayerParticipation(games);
-  const gameFrequencyByExpansion = generateGameFrequencyByExpansion(games);
-  const scoresOverTime = generateScoresOverTime(games);
-  const pointsDistribution = generatePointsDistribution(games);
-  const winsByPlayer = generateWinsByPlayer(games);
+  const averageScoresByPlayer = generateAverageScoresByPlayer(filteredGames);
+  const playerParticipation = generatePlayerParticipation(filteredGames);
+  const gameFrequencyByExpansion = generateGameFrequencyByExpansion(filteredGames);
+  const scoresOverTime = generateScoresOverTime(filteredGames);
+  const pointsDistribution = generatePointsDistribution(filteredGames);
+  const winsByPlayer = generateWinsByPlayer(filteredGames);
 
   return (
     <>
+    <CollapsibleDiv>
+      <FilterForm games={games} onFilter={setFilteredGames}/>
+    </CollapsibleDiv>
       <div className="min-h-screen bg-var(--bg-color) text-var(--text-color) p-5">
         <div className="flex flex-wrap -mx-4 mb-4">
           <div className="w-full md:w-1/2 px-4 mb-4">
@@ -470,10 +479,7 @@ const HomePage = () => {
           <Bar data={averageScoresByPlayer} />
         </div>
       </div>
-
-      <div className="homepage container mx-auto px-4 py-8">
-        <GameList games={games} />
-      </div>
+      {/* <PlayerPerformanceHeatmap games={games} /> */}
     </>
   );
 };
